@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "baseUrl": "src",
+      "outDir": "./dist/out-tsc",
+      "sourceMap": true,
+      "declaration": false,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "allowJs": true,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "jsx": "react",
+    },
+    "include": ["src"]
+}
