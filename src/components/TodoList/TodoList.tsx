@@ -43,9 +43,9 @@ const TodoList: FC<Props> = ({
                 }
                 control={
                     <Checkbox
-                    checked={done}
-                    color="secondary"
-                    onChange={event => onDoneValueChange(id, event.target.checked)}
+                        checked={done}
+                        color="secondary"
+                        onChange={event => onDoneValueChange(id, event.target.checked)}
                     />
                 }
                 />

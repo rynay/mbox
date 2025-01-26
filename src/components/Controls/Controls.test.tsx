@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { render, fireEvent, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import Controls from './Controls';
 
 describe('Controls', () => {
-    test('all controls should be disabled on empty todo list and left count should be zero', async () => {        
+    test('all controls should be disabled on empty todo list and left count should be zero', () => {        
         render(
             <Controls
                 todos={[]}
@@ -20,7 +20,7 @@ describe('Controls', () => {
         expect(screen.getByText('0 осталось')).toBeDefined();
     })
 
-    test('active controls should be disabled on todo list with only completed task', async () => {
+    test('active controls should be disabled on todo list with only completed task', () => {
         render(
             <Controls
                 todos={[
@@ -39,7 +39,7 @@ describe('Controls', () => {
         expect(screen.getByText('0 осталось')).toBeDefined();
     })
 
-    test('completed controls and clear button should be disabled on todo list with only active tasks', async () => {
+    test('completed controls and clear button should be disabled on todo list with only active tasks', () => {
         render(
             <Controls
                 todos={[
