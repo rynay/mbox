@@ -1,13 +1,11 @@
-import React, { FormEvent, useCallback, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-
-import './App.css';
+import Button from '@mui/material/Button';
 
 interface Todo {
   id: string;
@@ -17,7 +15,25 @@ interface Todo {
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [displayedTodos, setDisplayedTodos] = useState<Todo[]>(todos);
   const [inputValue, setInputValue] = useState<string>('');
+
+  useEffect(() => {
+    if (filter === 'all') setDisplayedTodos(todos)
+    else if (filter === 'active') setDisplayedTodos(todos.filter(el => !el.done))
+    else if (filter === 'completed') setDisplayedTodos(todos.filter(el => el.done))
+  }, [todos, filter]);
+
+  useEffect(() => {
+    const json = localStorage.getItem('todos');
+    if (json) setTodos(JSON.parse(json));
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos])
+
 
   const addTodo = useCallback((text: string) => {
     setTodos(todos => [{
@@ -37,57 +53,149 @@ function App() {
     setInputValue('');
   }, [inputValue, addTodo]);
 
-  return (
-    <Box
-      component="div"
-      sx={{
-        maxWidth: 500,
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <h1>todos</h1>
-      <Box
-        component="form"
-        sx={{ width: '100%' }}
-        noValidate
-        autoComplete="off"
-        onSubmit={(event) => handleSubmit(event)}
-      >
-        <TextField
-          sx={{ width: '100%' }}
-          id="outlined-basic"
-          label="What needs to be done?"
-          variant="outlined"
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-        />
-      </Box>
+  const handleClearCompleted = useCallback(() => {
+    setTodos(todos => todos.filter(todo => !todo.done));
+    if (filter === 'completed') setFilter('all');
+  }, [filter])
 
-      <FormGroup sx={{ width: '100%' }}>
-        {todos.map(({ id, text, done }) => (
-          <FormControlLabel
-            key={id}
-            label={
-              <Typography
-                color={done ? 'textDisabled' : 'textPrimary'}
-                sx={{ textDecoration: done ? 'line-through' : 'none' }}
-              >
-                {text}
-              </Typography>
-            }
-            control={
-              <Checkbox
-                checked={done}
-                color="success"
-                onChange={event => changeDoneValue(id, event.target.checked)}
-              />
-            }
+  const activeTodosCount = useMemo(() => (
+    todos.reduce(((acc, curr) => (curr.done ? acc : ++acc)), 0)
+  ), [todos]);
+
+  const hasDone = useMemo(() => (
+    todos.some(todo => todo.done)
+  ), [todos]);
+
+  return (
+    <Box sx={{
+      minHeight: '100vh',
+      background: 'radial-gradient(circle, rgba(19,7,103,1) 4%, rgba(159,19,199,1) 89%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Box
+        component="div"
+        sx={{
+          width: 600,
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          background: '#fefefe',
+          padding: '5px 40px 15px',
+          borderRadius: '5px',
+        }}
+      >
+        <h1>Список дел</h1>
+        <Box
+          component="form"
+          sx={{ width: '100%' }}
+          noValidate
+          autoComplete="off"
+          onSubmit={(event) => handleSubmit(event)}
+        >
+          <TextField
+            sx={{ width: '100%' }}
+            id="outlined-basic"
+            label="Что будем делать сегодня?"
+            variant="outlined"
+            color="secondary"
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
           />
-        ))}
-      </FormGroup>
+        </Box>
+
+        <Box
+          sx={{
+            width: '100%',
+            height: '300px',
+            display: 'flex',
+            flexDirection: 'column',
+            overflowY: 'scroll',
+            margin: '10px 0 0 -15px',
+            padding: '0 0 0 15px',
+            '& > * + *': {
+              marginTop: '5px',
+            }
+          }}
+        >
+          {displayedTodos.map(({ id, text, done }) => (
+            <Box key={id}>
+              <FormControlLabel
+                key={id}
+                label={
+                  <Typography
+                    color={done ? 'textDisabled' : 'textPrimary'}
+                    sx={{ textDecoration: done ? 'line-through' : 'none' }}
+                  >
+                    {text}
+                  </Typography>
+                }
+                control={
+                  <Checkbox
+                    checked={done}
+                    color="secondary"
+                    onChange={event => changeDoneValue(id, event.target.checked)}
+                  />
+                }
+              />
+            </Box>
+          ))}
+        </Box>
+
+        <Box sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: 1,
+        }}>
+        
+        <Typography variant='body2' color='textDisabled'>{`${activeTodosCount} осталось`}</Typography>
+
+        <Box sx={{ width: '230px', display: 'flex', justifyContent: 'space-between' }}>
+          <Button
+            size="small"
+            color="secondary"
+            variant={(todos.length && filter === 'all') ? 'outlined' : 'text'}
+            disabled={!todos.length}
+            onClick={() => setFilter('all')}
+          >
+            Все
+          </Button>
+          
+          <Button
+            size="small"
+            color="secondary"
+            variant={(todos.length && filter === 'active') ? 'outlined' : 'text'}
+            disabled={!todos.length || todos.every(todo => todo.done)}
+            onClick={() => setFilter('active')}
+          >
+            Сделать
+          </Button>
+          <Button
+            size="small"
+            color="secondary"
+            variant={(todos.length && filter === 'completed') ? 'outlined' : 'text'}
+            disabled={!todos.length || todos.every(todo => !todo.done)}
+            onClick={() => setFilter('completed')}
+          >
+            Готово
+          </Button>
+        </Box>
+
+        <Button
+          size="small"
+          color="secondary"
+          onClick={handleClearCompleted}
+          disabled={!hasDone}
+        >
+          Удалить сделано
+        </Button>
+
+        </Box>
+      </Box>
     </Box>
   );
 }
