@@ -3,16 +3,16 @@ import { Controls } from './components/Controls';
 import { TodoList } from './components/TodoList';
 import { NewValueField } from './components/NewValueField';
 import { Container } from './components/Container';
-import { Todo } from './types';
+import { Filter, Todo } from './types';
 
 interface Props {
   todos: Todo[],
   displayedTodos: Todo[],
-  addTodo: any, 
-  changeDoneValue: any,
-  filter: any,
-  setFilter: any,
-  handleClearCompleted: any,
+  addTodo: (text: string) => void, 
+  changeDoneValue: (id: string, done: boolean) => void,
+  filter: Filter,
+  setFilter: (v: Filter) => void,
+  handleClearCompleted: VoidFunction,
 }
 
 const App: FC<Props> = ({

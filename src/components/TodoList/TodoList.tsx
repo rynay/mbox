@@ -32,22 +32,23 @@ const TodoList: FC<Props> = ({
             {todos.map(({ id, text, done }) => (
             <Box key={id}>
                 <FormControlLabel
-                key={id}
-                label={
-                    <Typography
-                    color={done ? 'textDisabled' : 'textPrimary'}
-                    sx={{ textDecoration: done ? 'line-through' : 'none' }}
-                    >
-                    {text}
-                    </Typography>
-                }
-                control={
-                    <Checkbox
-                        checked={done}
-                        color="secondary"
-                        onChange={event => onDoneValueChange(id, event.target.checked)}
-                    />
-                }
+                    data-testid="todo-item"
+                    key={id}
+                    label={
+                        <Typography
+                        color={done ? 'textDisabled' : 'textPrimary'}
+                        sx={{ textDecoration: done ? 'line-through' : 'none' }}
+                        >
+                        {text}
+                        </Typography>
+                    }
+                    control={
+                        <Checkbox
+                            checked={done}
+                            color="secondary"
+                            onChange={event => onDoneValueChange(id, event.target.checked)}
+                        />
+                    }
                 />
             </Box>
             ))}

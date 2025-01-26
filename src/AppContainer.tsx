@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Filter, Todo } from './types';
-import { Controls } from './components/Controls';
-import { TodoList } from './components/TodoList';
-import { NewValueField } from './components/NewValueField';
-import { Container } from './components/Container';
+import App from './App';
 
-function App() {
+const AppContainer = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
   const [displayedTodos, setDisplayedTodos] = useState<Todo[]>(todos);
@@ -29,30 +26,22 @@ function App() {
     setTodos(todos => todos.map((todo) => (todo.id !== id ? todo : { ...todo, done })))
   }, [])
 
-    const handleClearCompleted = useCallback(() => {
-        setTodos(todos => todos.filter(todo => !todo.done));
-        if (filter === 'completed') setFilter('all');
-    }, [filter])
+  const handleClearCompleted = useCallback(() => {
+      setTodos(todos => todos.filter(todo => !todo.done));
+      if (filter === 'completed') setFilter('all');
+  }, [filter])
 
   return (
-    <Container>
-      <h1>Список дел</h1>
-
-      <NewValueField handleSubmit={addTodo} />
-
-      <TodoList
-        todos={displayedTodos}
-        onDoneValueChange={changeDoneValue}
-      />
-
-      <Controls
-        todos={todos}
-        filter={filter}
-        onClearCompleted={handleClearCompleted}
-        onFilterChange={setFilter}
-      />
-    </Container>
+    <App
+      todos={todos}
+      displayedTodos={displayedTodos}
+      addTodo={addTodo}
+      changeDoneValue={changeDoneValue}
+      filter={filter}
+      setFilter={setFilter}
+      handleClearCompleted={handleClearCompleted}
+    />
   );
 }
 
-export default App;
+export default AppContainer;

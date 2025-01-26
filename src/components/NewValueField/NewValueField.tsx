@@ -20,6 +20,7 @@ const NewValueField: FC<Props> = ({
 
     return (
         <Box
+            data-testid="todo-form"
             component="form"
             sx={{ width: '100%' }}
             noValidate
@@ -27,13 +28,13 @@ const NewValueField: FC<Props> = ({
             onSubmit={handleSubmit}
         >
             <TextField
-            sx={{ width: '100%' }}
-            id="outlined-basic"
-            label="Что будем делать сегодня?"
-            variant="outlined"
-            color="secondary"
-            value={inputValue}
-            onChange={(event) => setInputValue(event.target.value)}
+                sx={{ width: '100%' }}
+                id="outlined-basic"
+                label="Что будем делать сегодня?"
+                variant="outlined"
+                color="secondary"
+                value={inputValue}
+                onChange={(event) => setInputValue(event.target.value)}
             />
         </Box>
     )
