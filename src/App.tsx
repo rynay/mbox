@@ -1,14 +1,12 @@
-import React, { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import { Filter, Todo } from './types';
-import { FilterButton } from 'components/FilterButton';
-import { filters } from 'conts';
+import { Controls } from './components/Controls';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -49,19 +47,6 @@ function App() {
     addTodo(inputValue);
     setInputValue('');
   }, [inputValue, addTodo]);
-
-  const handleClearCompleted = useCallback(() => {
-    setTodos(todos => todos.filter(todo => !todo.done));
-    if (filter === 'completed') setFilter('all');
-  }, [filter])
-
-  const activeTodosCount = useMemo(() => (
-    todos.reduce(((acc, curr) => (curr.done ? acc : ++acc)), 0)
-  ), [todos]);
-
-  const hasDone = useMemo(() => (
-    todos.some(todo => todo.done)
-  ), [todos]);
 
   return (
     <Box sx={{
@@ -141,42 +126,12 @@ function App() {
           ))}
         </Box>
 
-        <Box sx={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: 1,
-        }}>
-        
-        <Typography variant='body2' color='textDisabled'>{`${activeTodosCount} осталось`}</Typography>
-
-        <Box sx={{ width: '230px', display: 'flex', justifyContent: 'space-between' }}>
-
-          {filters.map(({ name, label, checkIfDisabled }) => (
-              <FilterButton
-                currentFilter={filter}
-                unavailable={!todos.length}
-                disabled={!todos.length || checkIfDisabled?.(todos)}
-                onChange={setFilter}
-                filterName={name}
-              >
-                {label}
-              </FilterButton>
-          ))}
-
-        </Box>
-
-        <Button
-          size="small"
-          color="secondary"
-          onClick={handleClearCompleted}
-          disabled={!hasDone}
-        >
-          Удалить сделано
-        </Button>
-
-        </Box>
+        <Controls
+          todos={todos}
+          filter={filter}
+          onTodosChange={setTodos}
+          onFilterChange={setFilter}
+        />
       </Box>
     </Box>
   );
