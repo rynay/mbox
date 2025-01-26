@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { FilterButton } from 'components/FilterButton';
-import { filters } from './../../constants';
+import { filters } from '../../constants';
 import { Filter, Todo } from '../../types';
 
 interface Props {
