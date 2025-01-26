@@ -7,6 +7,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import { Filter, Todo } from './types';
 import { Controls } from './components/Controls';
+import { TodoList } from 'components/TodoList';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -48,6 +49,11 @@ function App() {
     setInputValue('');
   }, [inputValue, addTodo]);
 
+    const handleClearCompleted = useCallback(() => {
+        setTodos(todos => todos.filter(todo => !todo.done));
+        if (filter === 'completed') setFilter('all');
+    }, [filter])
+
   return (
     <Box sx={{
       minHeight: '100vh',
@@ -88,48 +94,15 @@ function App() {
           />
         </Box>
 
-        <Box
-          sx={{
-            width: '100%',
-            height: '300px',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'scroll',
-            margin: '10px 0 0 -15px',
-            padding: '0 0 0 15px',
-            '& > * + *': {
-              marginTop: '5px',
-            }
-          }}
-        >
-          {displayedTodos.map(({ id, text, done }) => (
-            <Box key={id}>
-              <FormControlLabel
-                key={id}
-                label={
-                  <Typography
-                    color={done ? 'textDisabled' : 'textPrimary'}
-                    sx={{ textDecoration: done ? 'line-through' : 'none' }}
-                  >
-                    {text}
-                  </Typography>
-                }
-                control={
-                  <Checkbox
-                    checked={done}
-                    color="secondary"
-                    onChange={event => changeDoneValue(id, event.target.checked)}
-                  />
-                }
-              />
-            </Box>
-          ))}
-        </Box>
+        <TodoList
+          todos={displayedTodos}
+          onDoneValueChange={changeDoneValue}
+        />
 
         <Controls
           todos={todos}
           filter={filter}
-          onTodosChange={setTodos}
+          onClearCompleted={handleClearCompleted}
           onFilterChange={setFilter}
         />
       </Box>
