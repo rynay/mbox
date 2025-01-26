@@ -6,16 +6,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
-interface Todo {
-  id: string;
-  text: string;
-  done: boolean;
-}
+import { Filter, Todo } from './types';
+import { FilterButton } from 'components/FilterButton';
+import { filters } from 'conts';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [filter, setFilter] = useState<Filter>('all');
   const [displayedTodos, setDisplayedTodos] = useState<Todo[]>(todos);
   const [inputValue, setInputValue] = useState<string>('');
 
@@ -155,34 +152,19 @@ function App() {
         <Typography variant='body2' color='textDisabled'>{`${activeTodosCount} осталось`}</Typography>
 
         <Box sx={{ width: '230px', display: 'flex', justifyContent: 'space-between' }}>
-          <Button
-            size="small"
-            color="secondary"
-            variant={(todos.length && filter === 'all') ? 'outlined' : 'text'}
-            disabled={!todos.length}
-            onClick={() => setFilter('all')}
-          >
-            Все
-          </Button>
-          
-          <Button
-            size="small"
-            color="secondary"
-            variant={(todos.length && filter === 'active') ? 'outlined' : 'text'}
-            disabled={!todos.length || todos.every(todo => todo.done)}
-            onClick={() => setFilter('active')}
-          >
-            Сделать
-          </Button>
-          <Button
-            size="small"
-            color="secondary"
-            variant={(todos.length && filter === 'completed') ? 'outlined' : 'text'}
-            disabled={!todos.length || todos.every(todo => !todo.done)}
-            onClick={() => setFilter('completed')}
-          >
-            Готово
-          </Button>
+
+          {filters.map(({ name, label, checkIfDisabled }) => (
+              <FilterButton
+                currentFilter={filter}
+                unavailable={!todos.length}
+                disabled={!todos.length || checkIfDisabled?.(todos)}
+                onChange={setFilter}
+                filterName={name}
+              >
+                {label}
+              </FilterButton>
+          ))}
+
         </Box>
 
         <Button
