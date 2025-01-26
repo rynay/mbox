@@ -36,12 +36,19 @@ const Controls: FC<Props> = ({
             padding: 1,
           }}>
           
-          <Typography variant='body2' color='textDisabled'>{`${activeTodosCount} осталось`}</Typography>
+          <Typography
+            data-testid="left-count"
+            variant='body2'
+            color='textDisabled'
+          >
+            {`${activeTodosCount} осталось`}
+          </Typography>
     
           <Box sx={{ width: '230px', display: 'flex', justifyContent: 'space-between' }}>
     
             {filters.map(({ name, label, checkIfDisabled }) => (
                 <FilterButton
+                  key={name}
                   currentFilter={filter}
                   unavailable={!todos.length}
                   disabled={!todos.length || checkIfDisabled?.(todos)}
@@ -55,6 +62,7 @@ const Controls: FC<Props> = ({
           </Box>
     
           <Button
+            data-testid="remove-completed"
             size="small"
             color="secondary"
             onClick={onClearCompleted}

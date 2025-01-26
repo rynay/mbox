@@ -23,6 +23,7 @@ const FilterButton: FC<Props> = ({
     return (
         <Button
             {...props}
+            data-testid={filterName}
             size="small"
             color="secondary"
             variant={(!unavailable && currentFilter === filterName) ? 'outlined' : 'text'}
